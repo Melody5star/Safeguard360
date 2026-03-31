@@ -1,0 +1,50 @@
+{
+  "resourceType": "Observation",
+  "id": "obs-001",
+  "subject": { "reference": "Patient/patient-001" },
+  "timestamp": "2026-03-18T10:30:00Z",
+  "status": "final",
+  "vitals": {
+    "heartRate": {
+      "value": 118,
+      "unit": "bpm",
+      "normalRange": "60-100",
+      "status": "HIGH"
+    },
+    "bloodPressure": {
+      "systolic": 88,
+      "diastolic": 55,
+      "unit": "mmHg",
+      "normalRange": "90-120 / 60-80",
+      "status": "LOW"
+    },
+    "temperature": {
+      "value": 38.9,
+      "unit": "Celsius",
+      "normalRange": "36.5-37.5",
+      "status": "HIGH"
+    },
+    "respiratoryRate": {
+      "value": 24,
+      "unit": "breaths/min",
+      "normalRange": "12-20",
+      "status": "HIGH"
+    },
+    "spO2": {
+      "value": 91,
+      "unit": "%",
+      "normalRange": "95-100",
+      "status": "LOW"
+    },
+    "consciousnessLevel": {
+      "value": "Alert",
+      "avpu": "A"
+    }
+  },
+  "sepsisIndicators": {
+    "score": 4,
+    "maxScore": 5,
+    "riskLevel": "HIGH",
+    "note": "4 of 5 sepsis indicators active. Immediate escalation recommended."
+  }
+}

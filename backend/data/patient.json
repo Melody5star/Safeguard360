@@ -1,0 +1,31 @@
+{
+  "resourceType": "Patient",
+  "id": "patient-001",
+  "meta": {
+    "profile": ["http://hl7.org/fhir/StructureDefinition/Patient"]
+  },
+  "name": [
+    {
+      "use": "official",
+      "text": "Ramesh Sharma",
+      "family": "Sharma",
+      "given": ["Ramesh"]
+    }
+  ],
+  "gender": "male",
+  "birthDate": "1952-04-10",
+  "age": 73,
+  "conditions": [
+    { "code": "E11", "display": "Type 2 Diabetes Mellitus" },
+    { "code": "I10", "display": "Essential Hypertension" },
+    { "code": "N18.3", "display": "Chronic Kidney Disease Stage 3" }
+  ],
+  "allergies": [
+    { "substance": "Penicillin", "severity": "severe" }
+  ],
+  "contact": {
+    "guardian": "Priya Sharma",
+    "relationship": "daughter",
+    "phone": "+91-9999999999"
+  }
+}

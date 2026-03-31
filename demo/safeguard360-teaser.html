@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeGuard360 — Teaser</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #050810;
+    --surface: #0d1220;
+    --card: #111827;
+    --accent: #00d4aa;
+    --accent2: #ff6b6b;
+    --accent3: #7c6af7;
+    --text: #f0f4ff;
+    --muted: #6b7fa3;
+    --border: rgba(255,255,255,0.07);
+  }
+
+  html, body {
+    width: 1280px; height: 720px;
+    overflow: hidden;
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    cursor: none;
+  }
+
+  /* SLIDES */
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+  .slide.active { opacity: 1; pointer-events: all; }
+
+  /* BG GRID */
+  .grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,170,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,170,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* SLIDE 1 — HOOK */
+  #s1 .content {
+    text-align: center; position: relative; z-index: 2;
+  }
+  #s1 .big-stat {
+    font-family: 'Syne', sans-serif;
+    font-size: 120px; font-weight: 800; line-height: 1;
+    background: linear-gradient(135deg, #ff6b6b, #ff4444);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: countUp 1.8s ease-out forwards;
+  }
+  @keyframes countUp {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  #s1 .label {
+    font-size: 22px; color: var(--muted); letter-spacing: 0.08em;
+    text-transform: uppercase; margin-top: 8px;
+    animation: fadeUp 0.8s 0.6s ease both;
+  }
+  #s1 .sub {
+    font-size: 32px; font-weight: 300; color: var(--text);
+    margin-top: 24px; line-height: 1.4;
+    animation: fadeUp 0.8s 1s ease both;
+  }
+  #s1 .sub span { color: var(--accent); font-weight: 500; }
+  #s1 .pill {
+    display: inline-block; margin-top: 32px;
+    padding: 10px 28px; border-radius: 100px;
+    border: 1px solid var(--accent2);
+    color: var(--accent2); font-size: 14px; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: fadeUp 0.8s 1.4s ease both;
+  }
+  #s1 .glow-circle {
+    position: absolute; width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,107,107,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%,-50%);
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-50%) scale(1.1)} }
+
+  /* SLIDE 2 — WHAT IT IS */
+  #s2 .layout {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+    align-items: center; padding: 0 80px; width: 100%;
+  }
+  #s2 .left-text h2 {
+    font-family: 'Syne', sans-serif; font-size: 52px; font-weight: 800;
+    line-height: 1.1; margin-bottom: 20px;
+    animation: slideRight 0.7s ease both;
+  }
+  #s2 .left-text h2 em { font-style: normal; color: var(--accent); }
+  #s2 .left-text p {
+    font-size: 18px; color: var(--muted); line-height: 1.7;
+    animation: slideRight 0.7s 0.2s ease both;
+  }
+  #s2 .cards { display: flex; flex-direction: column; gap: 16px; }
+  #s2 .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px 24px;
+    display: flex; align-items: flex-start; gap: 16px;
+    animation: slideLeft 0.7s ease both;
+  }
+  #s2 .card:nth-child(2) { animation-delay: 0.15s; }
+  #s2 .card:nth-child(3) { animation-delay: 0.3s; }
+  #s2 .icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  #s2 .icon.coral { background: rgba(255,107,107,0.15); }
+  #s2 .icon.teal  { background: rgba(0,212,170,0.15); }
+  #s2 .icon.purple{ background: rgba(124,106,247,0.15); }
+  #s2 .card-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  #s2 .card-desc  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* SLIDE 3 — TWO TOOLS */
+  #s3 { flex-direction: column; gap: 40px; }
+  #s3 .headline {
+    font-family: 'Syne', sans-serif; font-size: 38px; font-weight: 700;
+    text-align: center; letter-spacing: -0.01em;
+    animation: fadeUp 0.6s ease both;
+  }
+  #s3 .headline span { color: var(--accent); }
+  #s3 .tools { display: flex; gap: 32px; padding: 0 60px; width: 100%; }
+  #s3 .tool {
+    flex: 1; background: var(--card);
+    border: 1px solid var(--border); border-radius: 20px;
+    padding: 32px; position: relative; overflow: hidden;
+    animation: fadeUp 0.7s ease both;
+  }
+  #s3 .tool:nth-child(2) { animation-delay: 0.2s; }
+  #s3 .tool::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  #s3 .tool.t1::before { background: linear-gradient(90deg, #ff6b6b, #ff4444); }
+  #s3 .tool.t2::before { background: linear-gradient(90deg, #00d4aa, #00b894); }
+  #s3 .tool-icon { font-size: 36px; margin-bottom: 16px; }
+  #s3 .tool-name {
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700;
+    margin-bottom: 12px;
+  }
+  #s3 .tool-desc { font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+  #s3 .alert-box {
+    border-radius: 10px; padding: 12px 16px;
+    font-size: 13px; line-height: 1.5;
+  }
+  #s3 .alert-box.danger { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); color: #ff9999; }
+  #s3 .alert-box.warn   { background: rgba(0,212,170,0.1);  border: 1px solid rgba(0,212,170,0.3);  color: #00d4aa; }
+  #s3 .alert-label { font-weight: 600; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+
+  /* SLIDE 4 — TECH STACK */
+  #s4 { flex-direction: column; align-items: center; gap: 40px; }
+  #s4 .headline {
+    font-family: 'Syne', sans-serif; font-size: 38px; font-weight: 700;
+    animation: fadeUp 0.6s ease both;
+  }
+  #s4 .stack-grid {
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    padding: 0 80px;
+  }
+  #s4 .chip {
+    padding: 10px 20px; border-radius: 100px;
+    border: 1px solid var(--border);
+    font-size: 14px; font-weight: 500;
+    background: var(--card);
+    animation: popIn 0.5s ease both;
+  }
+  #s4 .chip.a { border-color: rgba(0,212,170,0.4); color: var(--accent); }
+  #s4 .chip.b { border-color: rgba(124,106,247,0.4); color: #a89cff; }
+  #s4 .chip.c { border-color: rgba(255,107,107,0.4); color: #ff9999; }
+  #s4 .chip.d { border-color: rgba(255,255,255,0.2); color: var(--muted); }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  #s4 .chip:nth-child(1){animation-delay:0.0s}
+  #s4 .chip:nth-child(2){animation-delay:0.08s}
+  #s4 .chip:nth-child(3){animation-delay:0.16s}
+  #s4 .chip:nth-child(4){animation-delay:0.24s}
+  #s4 .chip:nth-child(5){animation-delay:0.32s}
+  #s4 .chip:nth-child(6){animation-delay:0.40s}
+  #s4 .chip:nth-child(7){animation-delay:0.48s}
+  #s4 .chip:nth-child(8){animation-delay:0.56s}
+  #s4 .chip:nth-child(9){animation-delay:0.64s}
+  #s4 .flow {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 16px 28px;
+    animation: fadeUp 0.7s 0.7s ease both;
+  }
+  #s4 .flow-step { font-size: 13px; color: var(--muted); }
+  #s4 .flow-arrow { color: var(--accent); font-size: 18px; }
+  #s4 .flow-step.hi { color: var(--text); font-weight: 500; }
+
+  /* SLIDE 5 — CTA */
+  #s5 .content { text-align: center; position: relative; z-index: 2; }
+  #s5 .coming {
+    font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 20px;
+    animation: fadeUp 0.5s ease both;
+  }
+  #s5 h2 {
+    font-family: 'Syne', sans-serif; font-size: 64px; font-weight: 800;
+    line-height: 1.1; margin-bottom: 16px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  #s5 h2 em { font-style: normal; color: var(--accent); }
+  #s5 .tagline {
+    font-size: 22px; color: var(--muted); font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both; margin-bottom: 40px;
+  }
+  #s5 .tagline span { color: var(--text); font-weight: 500; }
+  #s5 .badges {
+    display: flex; gap: 16px; justify-content: center;
+    animation: fadeUp 0.6s 0.35s ease both;
+  }
+  #s5 .badge {
+    padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 500;
+  }
+  #s5 .badge.primary { background: var(--accent); color: #050810; }
+  #s5 .badge.outline { border: 1px solid var(--border); color: var(--muted); }
+  #s5 .glow-circle {
+    position: absolute; width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,212,170,0.07) 0%, transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%,-50%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+  #s5 .hackathon-tag {
+    margin-top: 28px; font-size: 13px; color: var(--muted);
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+  #s5 .hackathon-tag span { color: var(--accent3); }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 3px; background: rgba(255,255,255,0.06);
+    z-index: 100;
+  }
+  .progress-fill {
+    height: 100%; background: var(--accent);
+    transition: width 0.4s ease;
+  }
+
+  /* SLIDE COUNTER */
+  .counter {
+    position: fixed; bottom: 18px; right: 28px;
+    font-size: 12px; color: var(--muted); letter-spacing: 0.1em;
+    z-index: 100;
+  }
+
+  /* NAV DOTS */
+  .dots {
+    position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 100;
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--muted); transition: all 0.3s;
+    cursor: pointer;
+  }
+  .dot.active { background: var(--accent); width: 20px; border-radius: 3px; }
+
+  /* SKIP/NEXT HINT */
+  .hint {
+    position: fixed; bottom: 14px; left: 28px;
+    font-size: 11px; color: var(--muted); letter-spacing: 0.08em;
+    z-index: 100;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideRight {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideLeft {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* SCAN LINE EFFECT */
+  .scanline {
+    position: fixed; inset: 0; pointer-events: none; z-index: 200;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+    );
+  }
+
+  /* LOGO WATERMARK */
+  .watermark {
+    position: fixed; top: 24px; left: 36px;
+    font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800;
+    color: var(--text); z-index: 100; letter-spacing: -0.02em;
+  }
+  .watermark span { color: var(--accent); }
+
+  /* HACKATHON BADGE */
+  .hackbadge {
+    position: fixed; top: 24px; right: 36px;
+    font-size: 11px; color: var(--muted); letter-spacing: 0.1em;
+    text-transform: uppercase; z-index: 100;
+    border: 1px solid var(--border); border-radius: 100px;
+    padding: 6px 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="scanline"></div>
+<div class="watermark">Safe<span>Guard</span>360</div>
+<div class="hackbadge">Agents Assemble 2026</div>
+
+<!-- SLIDE 1: HOOK -->
+<div class="slide active" id="s1">
+  <div class="grid-bg"></div>
+  <div class="glow-circle"></div>
+  <div class="content">
+    <div class="big-stat">1.5M</div>
+    <div class="label">patients harmed by preventable errors — every year</div>
+    <div class="sub">The data exists. The patterns are known.<br><span>What's missing is an agent that acts on it.</span></div>
+    <div class="pill">Introducing SafeGuard360</div>
+  </div>
+</div>
+
+<!-- SLIDE 2: WHAT IT IS -->
+<div class="slide" id="s2">
+  <div class="grid-bg"></div>
+  <div class="layout">
+    <div class="left-text">
+      <h2>AI that <em>protects</em><br>patients in real time</h2>
+      <p>A dual-function healthcare agent deployed on the Prompt Opinion platform — catching danger before it becomes a disaster.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="icon coral">💊</div>
+        <div>
+          <div class="card-title">Polypharmacy Risk Checker</div>
+          <div class="card-desc">Analyzes every drug combination a patient is on and flags dangerous interactions instantly.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="icon teal">🏥</div>
+        <div>
+          <div class="card-title">ICU Early Warning System</div>
+          <div class="card-desc">Monitors real-time vitals and detects early sepsis and deterioration patterns before collapse.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="icon purple">⚡</div>
+        <div>
+          <div class="card-title">Powered by Groq + FHIR</div>
+          <div class="card-desc">Sub-second AI inference on standards-compliant healthcare data. No custom integration needed.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: TWO TOOLS IN ACTION -->
+<div class="slide" id="s3">
+  <div class="grid-bg"></div>
+  <div class="headline">Two tools. One <span>unified</span> patient safety agent.</div>
+  <div class="tools">
+    <div class="tool t1">
+      <div class="tool-icon">💊</div>
+      <div class="tool-name">Polypharmacy Checker</div>
+      <div class="tool-desc">Patient is on 8 medications. Agent cross-checks every combination against known interaction data and reasons over risk severity.</div>
+      <div class="alert-box danger">
+        <div class="alert-label">⚠ Critical Interaction Detected</div>
+        Warfarin + Ibuprofen — high bleeding risk. Recommend immediate clinical review and possible substitution.
+      </div>
+    </div>
+    <div class="tool t2">
+      <div class="tool-icon">📈</div>
+      <div class="tool-name">ICU Early Warning</div>
+      <div class="tool-desc">Patient vitals are monitored continuously. Agent scores multi-parameter deterioration patterns and escalates before crisis.</div>
+      <div class="alert-box warn">
+        <div class="alert-label">🔴 Early Sepsis Pattern — Escalate Now</div>
+        HR 118 · BP 88/55 · Temp 38.9°C · SpO2 91% — 4 of 5 sepsis indicators active.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: TECH STACK -->
+<div class="slide" id="s4">
+  <div class="grid-bg"></div>
+  <div class="headline">Built with the right stack</div>
+  <div class="stack-grid">
+    <div class="chip a">Groq API</div>
+    <div class="chip a">Llama 3.3 70B</div>
+    <div class="chip b">MCP Server</div>
+    <div class="chip b">A2A Protocol</div>
+    <div class="chip c">FHIR R4</div>
+    <div class="chip c">SHARP Specs</div>
+    <div class="chip d">Python · FastAPI</div>
+    <div class="chip d">React · Tailwind</div>
+    <div class="chip b">Prompt Opinion</div>
+  </div>
+  <div class="flow">
+    <span class="flow-step">FHIR Patient Data</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step hi">MCP Server</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step hi">Groq AI Reasoning</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step hi">Clinical Alert</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Clinician Action</span>
+  </div>
+</div>
+
+<!-- SLIDE 5: CTA -->
+<div class="slide" id="s5">
+  <div class="grid-bg"></div>
+  <div class="glow-circle"></div>
+  <div class="content">
+    <div class="coming">Coming — Agents Assemble Hackathon 2026</div>
+    <h2>Catch the danger<br>before it becomes<br>a <em>disaster.</em></h2>
+    <div class="tagline">SafeGuard360 — <span>AI patient safety, finally done right.</span></div>
+    <div class="badges">
+      <div class="badge primary">Built on Prompt Opinion</div>
+      <div class="badge outline">FHIR · MCP · A2A Compliant</div>
+    </div>
+    <div class="hackathon-tag">Submitted to <span>Agents Assemble — The Healthcare AI Endgame</span> · May 2026</div>
+  </div>
+</div>
+
+<!-- UI CHROME -->
+<div class="progress-bar"><div class="progress-fill" id="pf"></div></div>
+<div class="dots">
+  <div class="dot active" onclick="goTo(0)"></div>
+  <div class="dot" onclick="goTo(1)"></div>
+  <div class="dot" onclick="goTo(2)"></div>
+  <div class="dot" onclick="goTo(3)"></div>
+  <div class="dot" onclick="goTo(4)"></div>
+</div>
+<div class="counter" id="ctr">1 / 5</div>
+<div class="hint">SPACE or CLICK to advance</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
+  const pf = document.getElementById('pf');
+  const ctr = document.getElementById('ctr');
+  let cur = 0;
+  const total = slides.length;
+  const DURATIONS = [5000, 6000, 6000, 5000, 7000];
+  let timer;
+
+  function goTo(n) {
+    slides[cur].classList.remove('active');
+    dots[cur].classList.remove('active');
+    cur = (n + total) % total;
+    slides[cur].classList.add('active');
+    dots[cur].classList.add('active');
+    ctr.textContent = (cur + 1) + ' / ' + total;
+    pf.style.width = ((cur + 1) / total * 100) + '%';
+    clearTimeout(timer);
+    timer = setTimeout(() => goTo(cur + 1), DURATIONS[cur]);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' || e.code === 'ArrowRight') goTo(cur + 1);
+    if (e.code === 'ArrowLeft') goTo(cur - 1);
+  });
+  document.addEventListener('click', () => goTo(cur + 1));
+
+  timer = setTimeout(() => goTo(1), DURATIONS[0]);
+  pf.style.width = (1 / total * 100) + '%';
+</script>
+</body>
+</html>

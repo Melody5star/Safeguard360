@@ -1,0 +1,56 @@
+{
+  "resourceType": "MedicationRequest",
+  "id": "medreq-001",
+  "subject": { "reference": "Patient/patient-001" },
+  "medications": [
+    {
+      "id": "med-001",
+      "name": "Metformin",
+      "rxnorm": "860975",
+      "dose": "500mg",
+      "frequency": "twice daily",
+      "indication": "Type 2 Diabetes"
+    },
+    {
+      "id": "med-002",
+      "name": "Amlodipine",
+      "rxnorm": "329526",
+      "dose": "5mg",
+      "frequency": "once daily",
+      "indication": "Hypertension"
+    },
+    {
+      "id": "med-003",
+      "name": "Warfarin",
+      "rxnorm": "855332",
+      "dose": "5mg",
+      "frequency": "once daily",
+      "indication": "Atrial Fibrillation"
+    },
+    {
+      "id": "med-004",
+      "name": "Ibuprofen",
+      "rxnorm": "310965",
+      "dose": "400mg",
+      "frequency": "as needed",
+      "indication": "Pain relief"
+    },
+    {
+      "id": "med-005",
+      "name": "Lisinopril",
+      "rxnorm": "314076",
+      "dose": "10mg",
+      "frequency": "once daily",
+      "indication": "Hypertension, CKD"
+    },
+    {
+      "id": "med-006",
+      "name": "Atorvastatin",
+      "rxnorm": "617310",
+      "dose": "20mg",
+      "frequency": "once at night",
+      "indication": "Hyperlipidemia"
+    }
+  ],
+  "note": "Warfarin + Ibuprofen is a HIGH RISK combination — increased bleeding risk. Metformin with Stage 3 CKD requires dose review."
+}
