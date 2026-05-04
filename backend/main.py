@@ -74,7 +74,7 @@ def get_patient(patient_id: str):
 
 
 @app.api_route("/tools/polypharmacy", methods=["POST", "OPTIONS"])
-async def polypharmacy_tool(request: Request, req: PatientRequest):
+async def polypharmacy_tool(request: Request):
     """
     MCP Tool: check_polypharmacy_risk
     Ingests FHIR medication list and returns AI-powered drug interaction analysis.
@@ -85,9 +85,13 @@ async def polypharmacy_tool(request: Request, req: PatientRequest):
     if request.headers.get("X-API-Key") != API_KEY:
         raise HTTPException(status_code=401, detail="Invalid API Key")
     
+    # Parse request body
+    req_body = await request.json()
+    patient_id = req_body.get("patient_id", "patient-001")
+    
     # Extract SHARP context
     sharp_patient_id, fhir_token = get_sharp_context(request)
-    patient_id = sharp_patient_id or req.patient_id
+    patient_id = sharp_patient_id or patient_id
     
     # Load data (mock for now; in production, fetch from FHIR server using token)
     medications = load_json("medications.json")
@@ -99,7 +103,7 @@ async def polypharmacy_tool(request: Request, req: PatientRequest):
 
 
 @app.api_route("/tools/icu-warning", methods=["POST", "OPTIONS"])
-async def icu_warning_tool(request: Request, req: PatientRequest):
+async def icu_warning_tool(request: Request):
     """
     MCP Tool: check_icu_vitals
     Ingests FHIR vitals observations and returns deterioration risk assessment.
@@ -110,9 +114,13 @@ async def icu_warning_tool(request: Request, req: PatientRequest):
     if request.headers.get("X-API-Key") != API_KEY:
         raise HTTPException(status_code=401, detail="Invalid API Key")
     
+    # Parse request body
+    req_body = await request.json()
+    patient_id = req_body.get("patient_id", "patient-001")
+    
     # Extract SHARP context
     sharp_patient_id, fhir_token = get_sharp_context(request)
-    patient_id = sharp_patient_id or req.patient_id
+    patient_id = sharp_patient_id or patient_id
     
     # Load data (mock for now; in production, fetch from FHIR server using token)
     observations = load_json("observations.json")
