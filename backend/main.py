@@ -4,8 +4,8 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 import json, os, logging
 
-from tools.polypharmacy import check_polypharmacy_risk
-from tools.icu_warning import check_icu_warning
+from .tools.polypharmacy import check_polypharmacy_risk
+from .tools.icu_warning import check_icu_warning
 
 logging.basicConfig(level=logging.INFO)
 
