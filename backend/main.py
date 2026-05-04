@@ -73,12 +73,15 @@ def get_patient(patient_id: str):
         raise HTTPException(status_code=404, detail="Patient not found")
 
 
-@app.post("/tools/polypharmacy")
+@app.api_route("/tools/polypharmacy", methods=["POST", "OPTIONS"])
 async def polypharmacy_tool(request: Request, req: PatientRequest):
     """
     MCP Tool: check_polypharmacy_risk
     Ingests FHIR medication list and returns AI-powered drug interaction analysis.
     """
+    if request.method == "OPTIONS":
+        return {"status": "ok"}
+    
     if request.headers.get("X-API-Key") != API_KEY:
         raise HTTPException(status_code=401, detail="Invalid API Key")
     
@@ -95,12 +98,15 @@ async def polypharmacy_tool(request: Request, req: PatientRequest):
     return result
 
 
-@app.post("/tools/icu-warning")
+@app.api_route("/tools/icu-warning", methods=["POST", "OPTIONS"])
 async def icu_warning_tool(request: Request, req: PatientRequest):
     """
     MCP Tool: check_icu_vitals
     Ingests FHIR vitals observations and returns deterioration risk assessment.
     """
+    if request.method == "OPTIONS":
+        return {"status": "ok"}
+    
     if request.headers.get("X-API-Key") != API_KEY:
         raise HTTPException(status_code=401, detail="Invalid API Key")
     
@@ -117,7 +123,7 @@ async def icu_warning_tool(request: Request, req: PatientRequest):
     return result
 
 
-@app.get("/mcp/manifest")
+@app.api_route("/mcp/manifest", methods=["GET", "POST", "OPTIONS"])
 def mcp_manifest():
     """Prompt Opinion MCP tool manifest."""
     return {
