@@ -2,7 +2,12 @@ import os
 import json
 from groq import AsyncGroq
 
-client = AsyncGroq(api_key=os.environ.get("GROQ_API_KEY"))
+def get_groq_client():
+    """Get or initialize the Groq client."""
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        raise ValueError("GROQ_API_KEY environment variable not set")
+    return AsyncGroq(api_key=api_key)
 
 SYSTEM_PROMPT = """You are SafeGuard360's ICU Early Warning System — a clinical AI assistant.
 
@@ -98,6 +103,7 @@ Please analyze these vitals for deterioration patterns and return your risk asse
 """
 
     try:
+        client = get_groq_client()
         response = await client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
