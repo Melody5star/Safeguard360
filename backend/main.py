@@ -126,7 +126,7 @@ async def icu_warning_tool(request: Request):
     return result
 
 
-@app.get("/mcp/manifest")
+@app.api_route("/mcp/manifest", methods=["GET", "POST", "HEAD", "OPTIONS"])
 def mcp_manifest():
     """Prompt Opinion MCP tool manifest."""
     return {
