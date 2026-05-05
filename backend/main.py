@@ -19,7 +19,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://app.promptopinion.ai"],
+    allow_origins=["https://app.promptopinion.ai", "http://localhost:3000", "*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
