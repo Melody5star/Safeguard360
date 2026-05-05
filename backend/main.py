@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import json, os, logging
@@ -136,45 +137,100 @@ async def icu_warning_tool(request: Request):
     return result
 
 
+MCP_TOOLS = [
+    {
+        "name": "check_polypharmacy_risk",
+        "description": "Analyzes a patient FHIR medication list for dangerous drug interactions and polypharmacy risks",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "patient_id": {
+                    "type": "string",
+                    "description": "Patient ID to analyze (default: patient-001)"
+                }
+            }
+        }
+    },
+    {
+        "name": "check_icu_vitals",
+        "description": "Monitors ICU vitals and detects early sepsis or patient deterioration using NEWS2 scoring",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "patient_id": {
+                    "type": "string",
+                    "description": "Patient ID to analyze (default: patient-001)"
+                }
+            }
+        }
+    }
+]
+
+
 @app.api_route("/mcp/manifest", methods=["GET", "POST", "HEAD", "OPTIONS"])
 def mcp_manifest():
-    """Prompt Opinion MCP tool manifest."""
+    """Legacy static manifest — kept for reference."""
     return {
         "name": "safeguard360",
         "description": "AI patient safety agent — polypharmacy checker + ICU early warning",
         "version": "1.0.0",
-        "tools": [
-            {
-                "name": "check_polypharmacy_risk",
-                "description": "Analyzes a patient FHIR medication list for dangerous drug interactions",
-                "endpoint": "/tools/polypharmacy",
-                "method": "POST",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "patient_id": {
-                            "type": "string",
-                            "description": "The ID of the patient to analyze"
-                        }
-                    },
-                    "required": ["patient_id"]
-                }
-            },
-            {
-                "name": "check_icu_vitals",
-                "description": "Monitors ICU vitals and detects early sepsis / deterioration patterns",
-                "endpoint": "/tools/icu-warning",
-                "method": "POST",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "patient_id": {
-                            "type": "string",
-                            "description": "The ID of the patient to analyze"
-                        }
-                    },
-                    "required": ["patient_id"]
-                }
-            }
-        ]
+        "tools": MCP_TOOLS
     }
+
+
+@app.api_route("/mcp", methods=["GET", "POST", "HEAD", "OPTIONS"])
+async def mcp_endpoint(request: Request):
+    """MCP Streamable HTTP transport — JSON-RPC 2.0 handler for Prompt Opinion."""
+    if request.method in ("GET", "HEAD", "OPTIONS"):
+        return {"name": "safeguard360", "version": "1.0.0", "protocolVersion": "2024-11-05"}
+
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse(
+            status_code=400,
+            content={"jsonrpc": "2.0", "error": {"code": -32700, "message": "Parse error"}, "id": None}
+        )
+
+    method = body.get("method")
+    req_id = body.get("id")
+    params = body.get("params", {})
+
+    if method == "initialize":
+        return {
+            "jsonrpc": "2.0",
+            "id": req_id,
+            "result": {
+                "protocolVersion": "2024-11-05",
+                "capabilities": {"tools": {}},
+                "serverInfo": {"name": "safeguard360", "version": "1.0.0"}
+            }
+        }
+
+    if method in ("notifications/initialized", "ping"):
+        return Response(status_code=204)
+
+    if method == "tools/list":
+        return {"jsonrpc": "2.0", "id": req_id, "result": {"tools": MCP_TOOLS}}
+
+    if method == "tools/call":
+        tool_name = params.get("name")
+        patient_id = params.get("arguments", {}).get("patient_id", "patient-001")
+        try:
+            if tool_name == "check_polypharmacy_risk":
+                result = await check_polypharmacy_risk(load_json("patient.json"), load_json("medications.json"))
+            elif tool_name == "check_icu_vitals":
+                result = await check_icu_warning(load_json("patient.json"), load_json("observations.json"))
+            else:
+                return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32601, "message": f"Unknown tool: {tool_name}"}}
+            result["patient_id_used"] = patient_id
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "result": {"content": [{"type": "text", "text": json.dumps(result, indent=2)}]}
+            }
+        except Exception as e:
+            logging.error(f"MCP tool error: {e}")
+            return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32603, "message": str(e)}}
+
+    return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32601, "message": f"Method not found: {method}"}}
