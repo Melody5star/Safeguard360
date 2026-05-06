@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import json, os, logging
+import httpx
 
 from .tools.polypharmacy import check_polypharmacy_risk
 from .tools.icu_warning import check_icu_warning
@@ -35,6 +36,17 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 def load_json(filename):
     with open(os.path.join(DATA_DIR, filename)) as f:
         return json.load(f)
+
+async def fetch_fhir_resource(fhir_url: str, token: str, resource_type: str, patient_id: str):
+    """Fetch a FHIR R4 resource from a real server using PromptOpinion-provided credentials."""
+    headers = {"Authorization": f"Bearer {token}", "Accept": "application/fhir+json"}
+    async with httpx.AsyncClient(timeout=10) as client:
+        if resource_type == "Patient":
+            resp = await client.get(f"{fhir_url}/Patient/{patient_id}", headers=headers)
+        else:
+            resp = await client.get(f"{fhir_url}/{resource_type}?patient={patient_id}", headers=headers)
+        resp.raise_for_status()
+        return resp.json()
 
 def get_sharp_context(request: Request):
     """Extract patient_id and fhir_token from SHARP context header."""
@@ -202,7 +214,19 @@ async def mcp_endpoint(request: Request):
             "id": req_id,
             "result": {
                 "protocolVersion": "2024-11-05",
-                "capabilities": {"tools": {}},
+                "capabilities": {
+                    "tools": {},
+                    "extensions": {
+                        "ai.promptopinion/fhir-context": {
+                            "scopes": [
+                                {"name": "patient/Patient.rs", "required": True},
+                                {"name": "patient/MedicationRequest.rs", "required": True},
+                                {"name": "patient/Observation.rs", "required": True},
+                                {"name": "patient/Condition.rs"}
+                            ]
+                        }
+                    }
+                },
                 "serverInfo": {"name": "safeguard360", "version": "1.0.0"}
             }
         }
@@ -216,14 +240,45 @@ async def mcp_endpoint(request: Request):
     if method == "tools/call":
         tool_name = params.get("name")
         patient_id = params.get("arguments", {}).get("patient_id", "patient-001")
+
+        if tool_name not in ("check_polypharmacy_risk", "check_icu_vitals"):
+            return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32601, "message": f"Unknown tool: {tool_name}"}}
+
+        # Read PromptOpinion FHIR context headers
+        fhir_url = request.headers.get("X-FHIR-Server-URL")
+        fhir_token = request.headers.get("X-FHIR-Access-Token")
+        fhir_patient_id = request.headers.get("X-Patient-ID") or patient_id
+
         try:
+            patient = medications = observations = None
+            data_source = "mock"
+
+            if fhir_url and fhir_token:
+                try:
+                    patient = await fetch_fhir_resource(fhir_url, fhir_token, "Patient", fhir_patient_id)
+                    if tool_name == "check_polypharmacy_risk":
+                        medications = await fetch_fhir_resource(fhir_url, fhir_token, "MedicationRequest", fhir_patient_id)
+                    else:
+                        observations = await fetch_fhir_resource(fhir_url, fhir_token, "Observation", fhir_patient_id)
+                    data_source = "fhir_server"
+                except Exception as fhir_err:
+                    logging.warning(f"FHIR fetch failed, using mock data: {fhir_err}")
+
+            # Fall back to mock data for any missing resources
+            if patient is None:
+                patient = load_json("patient.json")
+            if medications is None:
+                medications = load_json("medications.json")
+            if observations is None:
+                observations = load_json("observations.json")
+
             if tool_name == "check_polypharmacy_risk":
-                result = await check_polypharmacy_risk(load_json("patient.json"), load_json("medications.json"))
-            elif tool_name == "check_icu_vitals":
-                result = await check_icu_warning(load_json("patient.json"), load_json("observations.json"))
+                result = await check_polypharmacy_risk(patient, medications)
             else:
-                return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32601, "message": f"Unknown tool: {tool_name}"}}
-            result["patient_id_used"] = patient_id
+                result = await check_icu_warning(patient, observations)
+
+            result["patient_id_used"] = fhir_patient_id
+            result["data_source"] = data_source
             return {
                 "jsonrpc": "2.0",
                 "id": req_id,
