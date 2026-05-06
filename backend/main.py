@@ -219,9 +219,9 @@ async def mcp_endpoint(request: Request):
                     "extensions": {
                         "ai.promptopinion/fhir-context": {
                             "scopes": [
-                                {"name": "patient/Patient.rs", "required": True},
-                                {"name": "patient/MedicationRequest.rs", "required": True},
-                                {"name": "patient/Observation.rs", "required": True},
+                                {"name": "patient/Patient.rs"},
+                                {"name": "patient/MedicationRequest.rs"},
+                                {"name": "patient/Observation.rs"},
                                 {"name": "patient/Condition.rs"}
                             ]
                         }
